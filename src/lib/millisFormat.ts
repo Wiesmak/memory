@@ -1,9 +1,8 @@
 const millisFormat = (milliseconds: number) => {
-  const ms = milliseconds % 100;
-  const s = Math.floor(milliseconds / 100) % 60;
-  const m = Math.floor(milliseconds / 6000) % 60;
-  const h = Math.floor(milliseconds / 360000);
-  return `${h}:${m}:${s}:${ms}`;
+  const ms = (milliseconds % 100).toString().padStart(2, '0');
+  const s = Math.floor((milliseconds / 100) % 60).toString().padStart(2, '0');
+  const m = Math.floor((milliseconds / 6000) % 60).toString().padStart(2, '0');
+  return `${m}:${s}:${ms}`;
 }
 
 export default millisFormat;
