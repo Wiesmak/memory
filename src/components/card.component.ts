@@ -1,9 +1,12 @@
 import {CardImage, mapToImage} from "#lib/characters.ts"
 import Clickable from "@/interfaces/clickable.ts"
+import GameRepositoryInterface from "@/repositories/game.interface.ts"
+import GameRepository from "@/repositories/game.repository.ts"
 
 export default class Card extends HTMLElement implements Clickable{
-  protected cardImage: CardImage
+  protected cardImage: CardImage = CardImage.REVERSE
   protected _open: boolean = false
+  protected _repository: GameRepositoryInterface
 
   get open() {
     return this._open
@@ -17,7 +20,8 @@ export default class Card extends HTMLElement implements Clickable{
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.cardImage = CardImage.AYANO2
+    this._repository = GameRepository.instance
+    this._repository.register(this.start.bind(this))
   }
 
   connectedCallback() {
@@ -29,15 +33,38 @@ export default class Card extends HTMLElement implements Clickable{
     this.removeEventListener('click', this.click.bind(this))
   }
 
+  public reset() {
+    this._open = false
+    this.render()
+  }
+
   public click() {
+    if (!this._repository.started) return
+    console.log('[Card] Card clicked')
     if (this._open) {
-      this._open = !this._open
-      this.animateCard(true)
+      console.log('[Card] Card already open')
+      return
     } else {
-      this._open = !this._open
-      this.animateCard(false)
-      this.render()
+      console.log('[Card] Card opening')
+      this._repository.move(this.cardImage, () => {
+        console.log('[Card] Card accepted')
+        this._open = true
+        this.animateCard(false)
+        this.render()
+      }, () => {
+        console.log('[Card] Card rejected')
+        setTimeout(() => {
+          console.log('[Card] Card closing')
+          this._open = false
+          this.animateCard(true)
+        }, 2000)
+      })
     }
+  }
+
+  public start(picture: number) {
+    this.cardImage = picture
+    this.render()
   }
 
   protected animateCard(reverse: boolean) {

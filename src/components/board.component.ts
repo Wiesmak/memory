@@ -1,10 +1,20 @@
+import Card from "@/components/card.component.ts"
+
 export default class Board extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
   }
 
+  public reset() {
+    const cards = this.querySelectorAll('x-card')
+    cards.forEach((card) => {
+      (card as Card).reset()
+    })
+  }
+
   connectedCallback() {
+    // language=HTML
     this.shadowRoot!.innerHTML = `
       <style>
         :host {
@@ -14,7 +24,7 @@ export default class Board extends HTMLElement {
           gap: 0.5rem;
           padding: 0.5rem;
           width: 60vw;
-          height: 80vh;
+          height: 100vh;
         }
       </style>
       <slot></slot>

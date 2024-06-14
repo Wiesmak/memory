@@ -8,3 +8,12 @@ html, body, #app {
   justify-content: center;
   align-items: center;
 }
+
+.side-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 20vw;
+  height: 100vh;
+}
